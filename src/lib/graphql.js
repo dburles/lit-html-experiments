@@ -5,11 +5,6 @@ export default function GraphQL({
 }) {
   let cache = {};
 
-  const body = JSON.stringify({
-    query,
-    variables,
-  });
-
   const fetcher = () => {
     const request = new Request(host, {
       method: 'POST',
@@ -17,7 +12,10 @@ export default function GraphQL({
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body,
+      body: JSON.stringify({
+        query,
+        variables,
+      }),
     });
 
     console.log('returning fetched result', query);
