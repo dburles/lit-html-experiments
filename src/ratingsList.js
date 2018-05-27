@@ -2,6 +2,7 @@ import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
 import { until } from 'https://unpkg.com/lit-html/lib/until.js?module';
 import { query, mutation } from './lib/graphql.js';
 import { updater, update } from './lib/state.js';
+import transaction from './lib/graphql-transaction.js';
 
 export const ratingsFragment = `
   id
@@ -29,23 +30,29 @@ const toggleVisibility = updater(() => {
 });
 
 const onRemove = ratingId => event => {
-  // Optimistic response
-  ratingsQuery.setCache(cache => ({
-    data: { ratings: cache.data.ratings.filter(item => item.id !== ratingId) },
-  }));
-
-  update();
-
-  mutation({
-    host: 'http://localhost:3010/graphql',
-    query: `
-      mutation removeRating($id: Int!) {
-        removeRating(id: $id) {
-          id
+  transaction({
+    optimistic: true,
+    mutation: mutation({
+      host: 'http://localhost:3010/graphql',
+      query: `
+        mutation removeRating($id: Int!) {
+          removeRating(id: $id) {
+            id
+          }
         }
-      }
-    `,
-  }).fetch({ variables: { id: ratingId } });
+      `,
+    }),
+    options: { variables: { id: ratingId } },
+    cache: {
+      target: ratingsQuery,
+      update: cache => ({
+        data: {
+          ratings: cache.data.ratings.filter(item => item.id !== ratingId),
+        },
+      }),
+    },
+    callback: update,
+  });
 };
 
 const getRatings = () =>
