@@ -1,3 +1,7 @@
 body {
   background: aliceblue;
 }
+
+form input {
+  display: block;
+}

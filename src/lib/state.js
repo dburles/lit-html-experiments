@@ -5,8 +5,8 @@ let _element;
 
 export const update = () => render(_template(), _element);
 
-export const updater = fn => event => args => {
-  fn(event, args);
+export const updater = fn => event => async args => {
+  await fn(event, args);
   update();
 };
 

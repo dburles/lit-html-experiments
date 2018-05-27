@@ -3,7 +3,6 @@ export default function GraphQL({
   operation: { query, variables = null },
   onCacheUpdate = () => {},
 }) {
-  const subscriptions = [];
   let cache = {};
 
   const body = JSON.stringify({
@@ -11,38 +10,43 @@ export default function GraphQL({
     variables,
   });
 
-  const request = new Request(host, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
+  const fetcher = () => {
+    const request = new Request(host, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body,
+    });
+
+    console.log('returning fetched result', query);
+    return fetch(request)
+      .then(response => response.json())
+      .then(data => {
+        cache = data;
+        console.log('cached: ', cache);
+        return data;
+      });
+  };
 
   return {
     setCache: cb => {
-      cache = { ...cb(cache) };
+      cache = cb(cache);
       onCacheUpdate();
     },
     getCache: () => cache,
-    request: () => {
+    fetch: () => {
       if (cache.data) {
         console.log('returning cached result', query);
         return new Promise(resolve => resolve(cache));
       }
-      console.log('returning fetched result', query);
-      return fetch(request)
-        .then(response => response.json())
-        .then(data => {
-          cache = data;
-          console.log('cached: ', cache);
-          return data;
-        });
+      return fetcher();
     },
-    subscribe(fn) {
-      subscriptions.push(fn);
-      return () => subscriptions.splice(subscriptions.indexOf(fn), 1);
-    },
+    refetch: () =>
+      fetcher().then(data => {
+        onCacheUpdate();
+        return data;
+      }),
   };
 }
