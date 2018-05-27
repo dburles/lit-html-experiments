@@ -3,7 +3,7 @@ import { GraphQLMutation } from './lib/graphql.js';
 import { ratingsQuery, ratingsFragment } from './ratingsList.js';
 import { update } from './lib/state.js';
 
-const onSubmit = event => {
+const onSubmit = async event => {
   event.preventDefault();
   const input = event.target.elements['title'];
   const title = input.value;
@@ -19,14 +19,14 @@ const onSubmit = event => {
     `,
   });
 
-  ratingsMutationQuery.fetch({ variables: { title } }).then(data => {
-    ratingsQuery.setCache(cache => ({
-      data: { ratings: [data.data.addRating, ...cache.data.ratings] },
-    }));
+  const data = await ratingsMutationQuery.fetch({ variables: { title } });
 
-    update();
-    input.value = '';
-  });
+  ratingsQuery.setCache(cache => ({
+    data: { ratings: [data.data.addRating, ...cache.data.ratings] },
+  }));
+
+  update();
+  input.value = '';
 };
 
 export const ratingsAdd = () => html`
