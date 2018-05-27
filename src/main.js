@@ -3,17 +3,17 @@ import {
   render,
 } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
 import { until } from 'https://unpkg.com/lit-html/lib/until.js?module';
-import GraphQL from './lib/graphql.js';
+import GraphQL1 from './lib/graphql.js';
+import GraphQL2 from './lib/graphql-internal-cache.js';
 import './elements/index.js';
 import { boot, updater } from './lib/state.js';
 
-const client = new GraphQL('http://localhost:3010/graphql');
+const client = new GraphQL2('http://localhost:3010/graphql');
 
-const getRatings1 = () =>
-  client
-    .query({
-      operation: {
-        query: `
+const ratingsQuery = GraphQL1({
+  host: 'http://localhost:3010/graphql',
+  operation: {
+    query: `
           query Ratings {
             ratings {
               id
@@ -22,8 +22,14 @@ const getRatings1 = () =>
             }
           }
         `,
-      },
-    })
+  },
+});
+
+window.ratingsQuery = ratingsQuery;
+
+const getRatings1 = () =>
+  ratingsQuery
+    .request()
     .then(
       response =>
         html`<ul>${response.data.ratings.map(
