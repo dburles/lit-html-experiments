@@ -1,7 +1,6 @@
 export default function GraphQL({
   host,
   operation: { query, variables = null },
-  onCacheUpdate = () => {},
 }) {
   let cache = {};
 
@@ -29,7 +28,6 @@ export default function GraphQL({
   return {
     setCache: cb => {
       cache = cb(cache);
-      onCacheUpdate();
     },
     getCache: () => cache,
     fetch: () => {
@@ -38,10 +36,6 @@ export default function GraphQL({
       }
       return fetcher();
     },
-    refetch: () =>
-      fetcher().then(data => {
-        onCacheUpdate();
-        return data;
-      }),
+    refetch: fetcher,
   };
 }
