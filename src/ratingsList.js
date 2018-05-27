@@ -45,7 +45,7 @@ const onRemove = ratingId => event => {
       query: `
         mutation removeRating($id: Int!) {
           removeRating(id: $id) {
-            ${ratingsFragment}
+            id
           }
         }
       `,
