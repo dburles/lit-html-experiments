@@ -1,6 +1,7 @@
 import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
 import GraphQL from './lib/graphql.js';
 import { ratingsQuery, ratingsFragment } from './ratingsList.js';
+import { update } from './lib/state.js';
 
 const onSubmit = event => {
   event.preventDefault();
@@ -29,6 +30,8 @@ const onSubmit = event => {
     ratingsQuery.setCache(cache => ({
       data: { ratings: [data.data.addRating, ...cache.data.ratings] },
     }));
+
+    update();
   });
 };
 

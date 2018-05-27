@@ -18,12 +18,10 @@ export default function GraphQL({
       }),
     });
 
-    console.log('returning fetched result', query);
     return fetch(request)
       .then(response => response.json())
       .then(data => {
         cache = data;
-        console.log('cached: ', cache);
         return data;
       });
   };
@@ -36,7 +34,6 @@ export default function GraphQL({
     getCache: () => cache,
     fetch: () => {
       if (cache.data) {
-        console.log('returning cached result', query);
         return new Promise(resolve => resolve(cache));
       }
       return fetcher();

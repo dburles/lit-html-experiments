@@ -13,14 +13,14 @@ export const ratingsQuery = GraphQL({
   host: 'http://localhost:3010/graphql',
   operation: {
     query: `
-        query Ratings {
-          ratings {
-            ${ratingsFragment}
-          }
+      query Ratings {
+        ratings {
+          ${ratingsFragment}
         }
-      `,
+      }
+    `,
   },
-  onCacheUpdate: update,
+  // onCacheUpdate: update,
 });
 
 window.ratingsQuery = ratingsQuery;
@@ -31,15 +31,53 @@ const toggleVisibility = updater(() => {
   visible = !visible;
 });
 
+const onRemove = ratingId => event => {
+  // Optimistic response
+  ratingsQuery.setCache(cache => ({
+    data: { ratings: cache.data.ratings.filter(item => item.id !== ratingId) },
+  }));
+
+  update();
+
+  GraphQL({
+    host: 'http://localhost:3010/graphql',
+    operation: {
+      query: `
+        mutation removeRating($id: Int!) {
+          removeRating(id: $id) {
+            ${ratingsFragment}
+          }
+        }
+      `,
+      variables: {
+        id: ratingId,
+      },
+    },
+  }).fetch();
+};
+
 const getRatings = () =>
-  ratingsQuery
-    .fetch()
-    .then(
-      response =>
-        html`<ul>${response.data.ratings.map(
-          rating => html`<li>${rating.title} -- ${rating.rating}</li>`,
-        )}</ul>`,
-    );
+  ratingsQuery.fetch().then(
+    response => html`
+      <ul>
+      ${response.data.ratings.map(
+        rating =>
+          html`
+          <li>
+            ${rating.title} --
+            ${rating.rating} --
+            <button on-click={${onRemove(rating.id)}}>x</button>
+          </li>
+          `,
+      )}
+      </ul>
+      `,
+  );
+
+const refetch = async event => {
+  await ratingsQuery.refetch();
+  update();
+};
 
 export const ratingsList = () => html`
   <button on-click=${toggleVisibility()}>
@@ -47,5 +85,5 @@ export const ratingsList = () => html`
   </button>
 
   ${visible ? until(getRatings(), html`<p>Loading...</p>`) : ''}
-  <button on-click=${() => ratingsQuery.refetch()}>Refetch</button>
+  <button on-click=${refetch}>Refetch</button>
 `;
