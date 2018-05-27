@@ -56,9 +56,10 @@ const onRemove = ratingId => event => {
   });
 };
 
-const getRatings = () =>
-  ratingsQuery.fetch().then(
-    response => html`
+const getRatings = async () => {
+  const response = await ratingsQuery.fetch();
+
+  return html`
       <ul>
         ${response.data.ratings.map(
           rating =>
@@ -71,8 +72,8 @@ const getRatings = () =>
             `,
         )}
       </ul>
-    `,
-  );
+    `;
+};
 
 const refetch = async event => {
   await ratingsQuery.refetch();
