@@ -18,13 +18,10 @@ const onSubmit = event => {
           }
         }
       `,
-      variables: {
-        title,
-      },
     },
   });
 
-  ratingsMutationQuery.fetch().then(data => {
+  ratingsMutationQuery.fetch({ variables: { title } }).then(data => {
     console.log('response', data);
 
     ratingsQuery.setCache(cache => ({

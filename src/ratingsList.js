@@ -49,11 +49,10 @@ const onRemove = ratingId => event => {
           }
         }
       `,
-      variables: {
-        id: ratingId,
-      },
     },
-  }).fetch();
+  }).fetch({
+    variables: { id: ratingId },
+  });
 };
 
 const getRatings = () =>

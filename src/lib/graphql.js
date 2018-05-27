@@ -1,10 +1,12 @@
-export default function GraphQL({
-  host,
-  operation: { query, variables = null },
-}) {
+export default function GraphQL({ host, operation: { query } }) {
   let cache = {};
+  let variables = null;
 
-  const fetcher = () => {
+  const fetcher = (options = {}) => {
+    if (options.variables) {
+      variables = options.variables;
+    }
+
     const request = new Request(host, {
       method: 'POST',
       headers: {
@@ -30,11 +32,11 @@ export default function GraphQL({
       cache = cb(cache);
     },
     getCache: () => cache,
-    fetch: () => {
+    fetch: (options = {}) => {
       if (cache.data) {
         return new Promise(resolve => resolve(cache));
       }
-      return fetcher();
+      return fetcher(options);
     },
     refetch: fetcher,
   };
