@@ -6,7 +6,7 @@ import { until } from 'https://unpkg.com/lit-html/lib/until.js?module';
 import GraphQL1 from './lib/graphql.js';
 import GraphQL2 from './lib/graphql-internal-cache.js';
 import './elements/index.js';
-import { boot, updater } from './lib/state.js';
+import { boot, updater, update } from './lib/state.js';
 
 const client = new GraphQL2('http://localhost:3010/graphql');
 
@@ -23,6 +23,7 @@ const ratingsQuery = GraphQL1({
           }
         `,
   },
+  onCacheUpdate: update,
 });
 
 window.ratingsQuery = ratingsQuery;

@@ -1,8 +1,11 @@
 export default function GraphQL({
   host,
   operation: { query, variables = null },
+  onCacheUpdate = () => {},
 }) {
+  const subscriptions = [];
   let cache = {};
+
   const body = JSON.stringify({
     query,
     variables,
@@ -18,7 +21,10 @@ export default function GraphQL({
   });
 
   return {
-    setCache: cb => (cache = { ...cb(cache) }),
+    setCache: cb => {
+      cache = { ...cb(cache) };
+      onCacheUpdate();
+    },
     getCache: () => cache,
     request: () => {
       if (cache.data) {
@@ -33,6 +39,10 @@ export default function GraphQL({
           console.log('cached: ', cache);
           return data;
         });
+    },
+    subscribe(fn) {
+      subscriptions.push(fn);
+      return () => subscriptions.splice(subscriptions.indexOf(fn), 1);
     },
   };
 }

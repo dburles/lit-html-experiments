@@ -3,7 +3,7 @@ import { render } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
 let _template;
 let _element;
 
-const update = () => render(_template(), _element);
+export const update = () => render(_template(), _element);
 
 export const updater = fn => event => args => {
   fn(event, args);
