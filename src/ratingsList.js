@@ -1,6 +1,6 @@
 import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
 import { until } from 'https://unpkg.com/lit-html/lib/until.js?module';
-import GraphQL from './lib/graphql.js';
+import { query, mutation } from './lib/graphql.js';
 import { updater, update } from './lib/state.js';
 
 export const ratingsFragment = `
@@ -9,18 +9,15 @@ export const ratingsFragment = `
   rating
 `;
 
-export const ratingsQuery = GraphQL({
+export const ratingsQuery = query({
   host: 'http://localhost:3010/graphql',
-  operation: {
-    query: `
-      query Ratings {
-        ratings {
-          ${ratingsFragment}
-        }
+  query: `
+    query Ratings {
+      ratings {
+        ${ratingsFragment}
       }
-    `,
-  },
-  // onCacheUpdate: update,
+    }
+  `,
 });
 
 window.ratingsQuery = ratingsQuery;
@@ -39,20 +36,16 @@ const onRemove = ratingId => event => {
 
   update();
 
-  GraphQL({
+  mutation({
     host: 'http://localhost:3010/graphql',
-    operation: {
-      query: `
-        mutation removeRating($id: Int!) {
-          removeRating(id: $id) {
-            id
-          }
+    query: `
+      mutation removeRating($id: Int!) {
+        removeRating(id: $id) {
+          id
         }
-      `,
-    },
-  }).fetch({
-    variables: { id: ratingId },
-  });
+      }
+    `,
+  }).fetch({ variables: { id: ratingId } });
 };
 
 const getRatings = () =>

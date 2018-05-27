@@ -1,5 +1,5 @@
 import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
-import GraphQL from './lib/graphql.js';
+import { mutation } from './lib/graphql.js';
 import { ratingsQuery, ratingsFragment } from './ratingsList.js';
 import { update } from './lib/state.js';
 
@@ -8,17 +8,15 @@ const onSubmit = event => {
 
   const title = event.target.elements['title'].value;
 
-  const ratingsMutationQuery = GraphQL({
+  const ratingsMutationQuery = mutation({
     host: 'http://localhost:3010/graphql',
-    operation: {
-      query: `
+    query: `
         mutation addRating($title: String!) {
           addRating(title: $title) {
             ${ratingsFragment}
           }
         }
       `,
-    },
   });
 
   ratingsMutationQuery.fetch({ variables: { title } }).then(data => {

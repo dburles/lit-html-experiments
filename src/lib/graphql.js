@@ -1,4 +1,4 @@
-export default function GraphQL({ host, operation: { query } }) {
+export const query = ({ host, query }) => {
   let cache = {};
   let variables = null;
 
@@ -40,4 +40,26 @@ export default function GraphQL({ host, operation: { query } }) {
     },
     refetch: fetcher,
   };
-}
+};
+
+export const mutation = ({ host, query }) => {
+  const fetcher = (options = {}) => {
+    const request = new Request(host, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: options.variables,
+      }),
+    });
+
+    return fetch(request).then(response => response.json());
+  };
+
+  return {
+    fetch: fetcher,
+  };
+};
