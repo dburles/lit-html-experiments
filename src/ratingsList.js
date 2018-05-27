@@ -1,6 +1,6 @@
 import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
 import { until } from 'https://unpkg.com/lit-html/lib/until.js?module';
-import { query, mutation } from './lib/graphql.js';
+import { GraphQLQuery, GraphQLMutation } from './lib/graphql.js';
 import { updater, update } from './lib/state.js';
 import transaction from './lib/graphql-transaction.js';
 
@@ -10,7 +10,7 @@ export const ratingsFragment = `
   rating
 `;
 
-export const ratingsQuery = query({
+export const ratingsQuery = GraphQLQuery({
   host: 'http://localhost:3010/graphql',
   query: `
     query Ratings {
@@ -22,6 +22,7 @@ export const ratingsQuery = query({
 });
 
 window.ratingsQuery = ratingsQuery;
+window.update = update;
 
 let visible = true;
 
@@ -32,7 +33,7 @@ const toggleVisibility = updater(() => {
 const onRemove = ratingId => event => {
   transaction({
     optimistic: true,
-    mutation: mutation({
+    mutation: GraphQLMutation({
       host: 'http://localhost:3010/graphql',
       query: `
         mutation removeRating($id: Int!) {
@@ -59,18 +60,18 @@ const getRatings = () =>
   ratingsQuery.fetch().then(
     response => html`
       <ul>
-      ${response.data.ratings.map(
-        rating =>
-          html`
-          <li>
-            ${rating.title} --
-            ${rating.rating} --
-            <button on-click={${onRemove(rating.id)}}>x</button>
-          </li>
-          `,
-      )}
+        ${response.data.ratings.map(
+          rating =>
+            html`
+              <li>
+                ${rating.title} --
+                ${rating.rating} --
+                <button on-click={${onRemove(rating.id)}}>x</button>
+              </li>
+            `,
+        )}
       </ul>
-      `,
+    `,
   );
 
 const refetch = async event => {

@@ -1,40 +1,53 @@
-export const query = ({ host, query }) => {
-  let cache = {};
-  let variables = null;
+const defaultRequestOptions = () => ({
+  method: 'POST',
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
+
+export const GraphQLQuery = ({
+  host,
+  query,
+  cache = true,
+  requestOptionsOverride = defaultRequestOptions,
+}) => {
+  let _cache = {};
+  let _variables = null;
 
   const fetcher = (options = {}) => {
     if (options.variables) {
-      variables = options.variables;
+      _variables = options.variables;
     }
 
     const request = new Request(host, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      ...requestOptionsOverride(defaultRequestOptions),
       body: JSON.stringify({
         query,
-        variables,
+        variables: _variables,
       }),
     });
 
     return fetch(request)
       .then(response => response.json())
       .then(data => {
-        cache = data;
+        if (cache) {
+          _cache = data;
+        }
         return data;
       });
   };
 
   return {
-    setCache: cb => {
-      cache = cb(cache);
-    },
-    getCache: () => cache,
-    fetch: (options = {}) => {
-      if (cache.data) {
-        return new Promise(resolve => resolve(cache));
+    ...(cache && {
+      setCache: cb => {
+        _cache = cb(_cache);
+      },
+      getCache: () => _cache,
+    }),
+    fetch: options => {
+      if (cache && _cache.data) {
+        return new Promise(resolve => resolve(_cache));
       }
       return fetcher(options);
     },
@@ -42,14 +55,14 @@ export const query = ({ host, query }) => {
   };
 };
 
-export const mutation = ({ host, query }) => {
+export const GraphQLMutation = ({
+  host,
+  query,
+  requestOptionsOverride = defaultRequestOptions,
+}) => {
   const fetcher = (options = {}) => {
     const request = new Request(host, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+      ...requestOptionsOverride(defaultRequestOptions),
       body: JSON.stringify({
         query,
         variables: options.variables,
