@@ -5,8 +5,8 @@ import { update } from './lib/state.js';
 
 const onSubmit = event => {
   event.preventDefault();
-
-  const title = event.target.elements['title'].value;
+  const input = event.target.elements['title'];
+  const title = input.value;
 
   const ratingsMutationQuery = mutation({
     host: 'http://localhost:3010/graphql',
@@ -27,6 +27,7 @@ const onSubmit = event => {
     }));
 
     update();
+    input.value = '';
   });
 };
 
@@ -34,7 +35,7 @@ export const ratingsAdd = () => html`
 <form on-submit=${onSubmit}>
   <fieldset>
     <label>Title</label>  
-    <input type="text" name="title" />
+    <input type="text" name="title" autocomplete="off" />
     <button>Add</button>
   </fieldset>
 </form>
