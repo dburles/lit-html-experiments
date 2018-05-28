@@ -6,6 +6,7 @@ const defaultRequestOptions = {
     'Content-Type': 'application/json',
   },
 };
+const defaultFetchOptions = { variables: null, fetchMore: false };
 
 export const GraphQLQuery = ({
   host = defaultHost,
@@ -16,7 +17,7 @@ export const GraphQLQuery = ({
   let _cache = {};
   let _variables = null;
 
-  const fetcher = (options = { variables: null, fetchMore: false }) => {
+  const fetcher = (options = defaultFetchOptions) => {
     if (options.variables) {
       _variables = options.variables;
     }
@@ -46,7 +47,11 @@ export const GraphQLQuery = ({
       },
       getCache: () => _cache,
     }),
-    fetch: (options = {}) => {
+    fetch: (options = defaultFetchOptions) => {
+      console.log(
+        JSON.stringify(options.variables),
+        JSON.stringify(_variables),
+      );
       if (
         cache &&
         Object.keys(_cache).length &&
@@ -75,7 +80,7 @@ export const GraphQLMutation = ({
   query,
   requestOptionsOverride = options => options,
 }) => {
-  const fetcher = (options = {}) => {
+  const fetcher = (options = { variables: null }) => {
     const request = new Request(host, {
       ...requestOptionsOverride(defaultRequestOptions),
       body: JSON.stringify({

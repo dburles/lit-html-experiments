@@ -22,7 +22,7 @@ const onSubmit = async event => {
   const data = await ratingsMutationQuery.fetch({ variables: { title } });
 
   ratingsQuery.setCache(cache => ({
-    data: { ratings: [data.data.addRating, ...cache.data.ratings] },
+    ratings: [data.addRating, ...cache.ratings],
   }));
 
   update();

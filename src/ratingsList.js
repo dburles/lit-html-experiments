@@ -47,9 +47,7 @@ const onRemove = ratingId => event => {
     cache: {
       target: ratingsQuery,
       update: cache => ({
-        data: {
-          ratings: cache.data.ratings.filter(item => item.id !== ratingId),
-        },
+        ratings: cache.ratings.filter(item => item.id !== ratingId),
       }),
     },
     callback: update,
@@ -61,7 +59,7 @@ const getRatings = async () => {
 
   return html`
       <ul>
-        ${response.data.ratings.map(
+        ${response.ratings.map(
           rating =>
             html`
               <li>
