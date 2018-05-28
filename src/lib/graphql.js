@@ -6,19 +6,18 @@ const defaultRequestOptions = {
     'Content-Type': 'application/json',
   },
 };
-const defaultFetchOptions = { variables: null, fetchMore: false };
 
 export const GraphQLQuery = ({
   host = defaultHost,
   query,
-  cache = true,
+  cache = false,
   requestOptionsOverride = options => options,
 }) => {
   let _cache = {};
   let _variables = null;
 
-  const fetcher = (options = defaultFetchOptions) => {
-    if (options.variables) {
+  const fetcher = (options = { variables: null, fetchMore: false }) => {
+    if (options.variables && !options.fetchMore) {
       _variables = options.variables;
     }
 
@@ -47,11 +46,7 @@ export const GraphQLQuery = ({
       },
       getCache: () => _cache,
     }),
-    fetch: (options = defaultFetchOptions) => {
-      console.log(
-        JSON.stringify(options.variables),
-        JSON.stringify(_variables),
-      );
+    fetch: (options = {}) => {
       if (
         cache &&
         Object.keys(_cache).length &&
@@ -65,7 +60,12 @@ export const GraphQLQuery = ({
       return fetcher(options);
     },
     refetch: fetcher,
-    fetchMore: options => fetcher({ ...options, fetchMore: true }),
+    fetchMore: options => {
+      if (!cache) {
+        throw Error('Cannot call `fetchMore` without cache');
+      }
+      return fetcher({ ...options, fetchMore: true });
+    },
     options: {
       host,
       query,
@@ -80,7 +80,7 @@ export const GraphQLMutation = ({
   query,
   requestOptionsOverride = options => options,
 }) => {
-  const fetcher = (options = { variables: null }) => {
+  const fetcher = (options = {}) => {
     const request = new Request(host, {
       ...requestOptionsOverride(defaultRequestOptions),
       body: JSON.stringify({
