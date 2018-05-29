@@ -1,7 +1,7 @@
 import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
 import { GraphQLMutation } from './lib/graphql.js';
 import { ratingsQuery, ratingsFragment } from './ratingsList.js';
-import { update } from './lib/state.js';
+import { render } from './lib/state.js';
 
 const onSubmit = async event => {
   event.preventDefault();
@@ -25,7 +25,7 @@ const onSubmit = async event => {
     ratings: [data.addRating, ...cache.ratings],
   }));
 
-  update();
+  render();
   input.value = '';
 };
 

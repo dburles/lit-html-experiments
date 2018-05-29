@@ -1,7 +1,7 @@
 import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
 import { until } from 'https://unpkg.com/lit-html/lib/until.js?module';
 import { GraphQLQuery, GraphQLMutation } from './lib/graphql.js';
-import { updater, update } from './lib/state.js';
+import { updater, render } from './lib/state.js';
 import transaction from './lib/graphql-transaction.js';
 
 export const ratingsFragment = `
@@ -23,7 +23,7 @@ export const ratingsQuery = GraphQLQuery({
 });
 
 window.ratingsQuery = ratingsQuery;
-window.update = update;
+window.render = render;
 
 let visible = true;
 
@@ -51,7 +51,7 @@ const onRemove = ratingId => event => {
         ratings: cache.ratings.filter(item => item.id !== ratingId),
       }),
     },
-    callback: update,
+    callback: render,
   });
 };
 
@@ -76,7 +76,7 @@ const getRatings = async () => {
 
 const refetch = async event => {
   await ratingsQuery.refetch();
-  update();
+  render();
 };
 
 export const ratingsList = () => html`

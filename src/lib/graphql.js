@@ -13,7 +13,7 @@ export const GraphQLQuery = ({
   url = defaultUrl,
   query,
   cache = false,
-  requestOptionsOverride = options => options,
+  requestOptions = options => options,
 }) => {
   let _cache = {};
   let _variables = null;
@@ -27,7 +27,7 @@ export const GraphQLQuery = ({
     }
 
     const request = new Request(url, {
-      ...requestOptionsOverride(defaultRequestOptions),
+      ...requestOptions(defaultRequestOptions),
       body: JSON.stringify({
         query,
         variables: options.fetchMore ? userOptions.variables : _variables,
@@ -73,7 +73,7 @@ export const GraphQLQuery = ({
       url,
       query,
       cache,
-      requestOptionsOverride,
+      requestOptions,
     },
   };
 };
@@ -81,11 +81,11 @@ export const GraphQLQuery = ({
 export const GraphQLMutation = ({
   url = defaultUrl,
   query,
-  requestOptionsOverride = options => options,
+  requestOptions = options => options,
 }) => {
   const fetcher = (options = defaultFetchUserOptions) => {
     const request = new Request(url, {
-      ...requestOptionsOverride(defaultRequestOptions),
+      ...requestOptions(defaultRequestOptions),
       body: JSON.stringify({
         query,
         variables: options.variables,
@@ -100,7 +100,7 @@ export const GraphQLMutation = ({
     options: {
       url,
       query,
-      requestOptionsOverride,
+      requestOptions,
     },
   };
 };
