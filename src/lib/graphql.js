@@ -22,7 +22,6 @@ export const GraphQLQuery = ({
     userOptions = defaultFetchUserOptions,
     options = defaultFetchOptions,
   ) => {
-    console.log(userOptions, options);
     if (userOptions.variables && !options.fetchMore) {
       _variables = userOptions.variables;
     }
@@ -37,7 +36,7 @@ export const GraphQLQuery = ({
 
     return fetch(request)
       .then(response => response.json())
-      .then(({ data }) => {
+      .then(data => {
         if (cache && !options.fetchMore) {
           _cache = data;
         }
@@ -48,7 +47,7 @@ export const GraphQLQuery = ({
   return {
     ...(cache && {
       setCache: cb => {
-        _cache = cb(_cache);
+        _cache.data = cb(_cache.data);
       },
       getCache: () => _cache,
     }),
@@ -95,9 +94,7 @@ export const GraphQLMutation = ({
       }),
     });
 
-    return fetch(request)
-      .then(response => response.json())
-      .then(({ data }) => data);
+    return fetch(request).then(response => response.json());
   };
 
   return {

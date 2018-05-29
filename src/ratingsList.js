@@ -60,7 +60,7 @@ const getRatings = async () => {
 
   return html`
       <ul>
-        ${response.ratings.map(
+        ${response.data.ratings.map(
           rating =>
             html`
               <li>
