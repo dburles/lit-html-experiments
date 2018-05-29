@@ -47,7 +47,7 @@ export const GraphQLQuery = ({
   return {
     ...(cache && {
       setCache: cb => {
-        _cache.data = cb(_cache.data);
+        _cache = { data: cb(_cache.data) };
       },
       getCache: () => _cache,
     }),
