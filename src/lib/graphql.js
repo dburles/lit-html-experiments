@@ -1,4 +1,4 @@
-const defaultHost = '/graphql';
+const defaultUrl = '/graphql';
 const defaultRequestOptions = {
   method: 'POST',
   headers: {
@@ -10,7 +10,7 @@ const defaultFetchUserOptions = { variables: null };
 const defaultFetchOptions = { fetchMore: false };
 
 export const GraphQLQuery = ({
-  host = defaultHost,
+  url = defaultUrl,
   query,
   cache = false,
   requestOptionsOverride = options => options,
@@ -26,7 +26,7 @@ export const GraphQLQuery = ({
       _variables = userOptions.variables;
     }
 
-    const request = new Request(host, {
+    const request = new Request(url, {
       ...requestOptionsOverride(defaultRequestOptions),
       body: JSON.stringify({
         query,
@@ -58,10 +58,8 @@ export const GraphQLQuery = ({
         // If variables are unchanged from previous request
         JSON.stringify(userOptions.variables) === JSON.stringify(_variables)
       ) {
-        console.log('returning cached');
         return new Promise(resolve => resolve(_cache));
       }
-      console.log('returning fetched');
       return fetcher(userOptions);
     },
     refetch: fetcher,
@@ -72,7 +70,7 @@ export const GraphQLQuery = ({
       return fetcher(userOptions, { fetchMore: true });
     },
     options: {
-      host,
+      url,
       query,
       cache,
       requestOptionsOverride,
@@ -81,12 +79,12 @@ export const GraphQLQuery = ({
 };
 
 export const GraphQLMutation = ({
-  host = defaultHost,
+  url = defaultUrl,
   query,
   requestOptionsOverride = options => options,
 }) => {
-  const fetcher = (options = {}) => {
-    const request = new Request(host, {
+  const fetcher = (options = defaultFetchUserOptions) => {
+    const request = new Request(url, {
       ...requestOptionsOverride(defaultRequestOptions),
       body: JSON.stringify({
         query,
@@ -100,7 +98,7 @@ export const GraphQLMutation = ({
   return {
     fetch: fetcher,
     options: {
-      host,
+      url,
       query,
       requestOptionsOverride,
     },

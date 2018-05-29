@@ -9,7 +9,7 @@ const onSubmit = async event => {
   const title = input.value;
 
   const ratingsMutationQuery = GraphQLMutation({
-    host: 'http://localhost:3010/graphql',
+    url: 'http://localhost:3010/graphql',
     query: `
       mutation addRating($title: String!) {
         addRating(title: $title) {

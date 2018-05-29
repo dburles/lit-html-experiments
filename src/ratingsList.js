@@ -11,7 +11,7 @@ export const ratingsFragment = `
 `;
 
 export const ratingsQuery = GraphQLQuery({
-  host: 'http://localhost:3010/graphql',
+  url: 'http://localhost:3010/graphql',
   cache: true,
   query: `
     query Ratings {
@@ -35,7 +35,7 @@ const onRemove = ratingId => event => {
   transaction({
     optimistic: true,
     mutation: GraphQLMutation({
-      host: 'http://localhost:3010/graphql',
+      url: 'http://localhost:3010/graphql',
       query: `
         mutation removeRating($id: Int!) {
           removeRating(id: $id) {
