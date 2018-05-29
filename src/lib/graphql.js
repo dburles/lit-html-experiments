@@ -6,6 +6,8 @@ const defaultRequestOptions = {
     'Content-Type': 'application/json',
   },
 };
+const defaultFetchUserOptions = { variables: null };
+const defaultFetchOptions = { fetchMore: false };
 
 export const GraphQLQuery = ({
   host = defaultHost,
@@ -16,16 +18,20 @@ export const GraphQLQuery = ({
   let _cache = {};
   let _variables = null;
 
-  const fetcher = (options = { variables: null, fetchMore: false }) => {
-    if (options.variables && !options.fetchMore) {
-      _variables = options.variables;
+  const fetcher = (
+    userOptions = defaultFetchUserOptions,
+    options = defaultFetchOptions,
+  ) => {
+    console.log(userOptions, options);
+    if (userOptions.variables && !options.fetchMore) {
+      _variables = userOptions.variables;
     }
 
     const request = new Request(host, {
       ...requestOptionsOverride(defaultRequestOptions),
       body: JSON.stringify({
         query,
-        variables: _variables,
+        variables: options.fetchMore ? userOptions.variables : _variables,
       }),
     });
 
@@ -46,25 +52,25 @@ export const GraphQLQuery = ({
       },
       getCache: () => _cache,
     }),
-    fetch: (options = {}) => {
+    fetch: (userOptions = defaultFetchUserOptions) => {
       if (
         cache &&
         Object.keys(_cache).length &&
         // If variables are unchanged from previous request
-        JSON.stringify(options.variables) === JSON.stringify(_variables)
+        JSON.stringify(userOptions.variables) === JSON.stringify(_variables)
       ) {
         console.log('returning cached');
         return new Promise(resolve => resolve(_cache));
       }
       console.log('returning fetched');
-      return fetcher(options);
+      return fetcher(userOptions);
     },
     refetch: fetcher,
-    fetchMore: options => {
+    fetchMore: (userOptions = defaultFetchUserOptions) => {
       if (!cache) {
         throw Error('Cannot call `fetchMore` without cache');
       }
-      return fetcher({ ...options, fetchMore: true });
+      return fetcher(userOptions, { fetchMore: true });
     },
     options: {
       host,

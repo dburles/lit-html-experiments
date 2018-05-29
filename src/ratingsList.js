@@ -12,6 +12,7 @@ export const ratingsFragment = `
 
 export const ratingsQuery = GraphQLQuery({
   host: 'http://localhost:3010/graphql',
+  cache: true,
   query: `
     query Ratings {
       ratings {
