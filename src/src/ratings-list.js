@@ -46,13 +46,11 @@ let deletingId;
 
 const onRemove = ratingId => async event => {
   deletingId = ratingId;
-  render();
 
   await removeMutation.fetch({ variables: { id: ratingId } });
   await ratingsQuery.refetch();
 
   deletingId = undefined;
-  // render();
 };
 
 const rateMutation = GraphQLMutation({
@@ -84,8 +82,6 @@ const onRate = ratingId => value => async event => {
   }));
 
   rateMutation.fetch({ variables: { id: ratingId, rating } });
-
-  // render();
 };
 
 const getRatings = async () => {
@@ -118,7 +114,6 @@ const getRatings = async () => {
 
 const refetch = async event => {
   await ratingsQuery.refetch();
-  // render();
 };
 
 export const ratingsList = () => html`
