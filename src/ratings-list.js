@@ -46,6 +46,7 @@ let deletingId;
 
 const onRemove = ratingId => async event => {
   deletingId = ratingId;
+  render();
 
   await removeMutation.fetch({ variables: { id: ratingId } });
   await ratingsQuery.refetch();
