@@ -24,7 +24,8 @@
   },
   "eslintConfig": {
     "env": {
-      "browser": true
+      "browser": true,
+      "es6": true
     },
     "plugins": [
       "prettier",
@@ -37,8 +38,8 @@
       "plugin:import/warnings"
     ],
     "parserOptions": {
-      "ecmaVersion": 2018,
-      "sourceType": "module"
+      "sourceType": "module",
+      "ecmaVersion": 2018
     },
     "rules": {
       "prettier/prettier": [

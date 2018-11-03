@@ -3,7 +3,7 @@ import { until } from 'https://unpkg.com/lit-html/directives/until.js?module';
 import produce from 'https://unpkg.com/immer@1.3.1/dist/immer.module.js?module';
 import { GraphQLQuery, GraphQLMutation } from './lib/graphql.js';
 import { eventState, render } from './lib/state.js';
-import transaction from './lib/graphql-transaction.js';
+// import transaction from './lib/graphql-transaction.js';
 import { stars } from './star-rate.js';
 
 const url = 'https://api.graph.cool/simple/v1/cjhr8g0an2ng50119f79tcz0u';
