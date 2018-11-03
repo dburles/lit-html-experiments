@@ -18,7 +18,7 @@ let submitting = false;
 
 const onSubmit = async event => {
   event.preventDefault();
-  const input = event.target.elements['title']
+  const input = event.target.elements['title'];
   const title = input.value;
 
   submitting = true;
@@ -38,9 +38,9 @@ const onSubmit = async event => {
 };
 
 export const ratingsAdd = () => html`
-<form @submit=${onSubmit}>
-  <label>Title</label>
-  <input type="text" name="title" autocomplete="off" />
-  <button ?disabled=${submitting}>${submitting ? 'Saving...' : 'Add'}</button>
-</form>
+  <form @submit=${onSubmit}>
+    <label>Title</label>
+    <input type="text" name="title" autocomplete="off" />
+    <button ?disabled=${submitting}>${submitting ? 'Saving...' : 'Add'}</button>
+  </form>
 `;

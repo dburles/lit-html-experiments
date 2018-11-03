@@ -40,4 +40,4 @@ app.use(
 app.listen(3000);
 sock.listen(3005);
 
-console.log(`💦 Server running at http://localhost:3000`);
+console.log(`💦  Server running at http://localhost:3000`);
