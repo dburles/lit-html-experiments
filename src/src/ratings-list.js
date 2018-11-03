@@ -24,6 +24,8 @@ export const ratingsQuery = GraphQLQuery({
   }`,
 });
 
+ratingsQuery.subscribe(render);
+
 let visible = true;
 const toggleVisibility = eventState(() => {
   visible = !visible;
@@ -50,7 +52,7 @@ const onRemove = ratingId => async event => {
   await ratingsQuery.refetch();
 
   deletingId = undefined;
-  render();
+  // render();
 };
 
 const rateMutation = GraphQLMutation({
@@ -83,7 +85,7 @@ const onRate = ratingId => value => async event => {
 
   rateMutation.fetch({ variables: { id: ratingId, rating } });
 
-  render();
+  // render();
 };
 
 const getRatings = async () => {
@@ -116,7 +118,7 @@ const getRatings = async () => {
 
 const refetch = async event => {
   await ratingsQuery.refetch();
-  render();
+  // render();
 };
 
 export const ratingsList = () => html`
