@@ -1,5 +1,5 @@
-import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
-import { until } from 'https://unpkg.com/lit-html/lib/until.js?module';
+import { html } from 'https://unpkg.com/lit-html?module';
+import { until } from 'https://unpkg.com/lit-html/directives/until.js?module';
 import produce from 'https://unpkg.com/immer@1.3.1/dist/immer.module.js?module';
 import { GraphQLQuery, GraphQLMutation } from './lib/graphql.js';
 import { eventState, render } from './lib/state.js';
@@ -101,9 +101,9 @@ const getRatings = async () => {
                 rating: rating.rating,
               })}</td>
               <td>
-                <button on-click={${onRemove(
+                <button @click={${onRemove(
                   rating.id,
-                )}} disabled=${deletingId === rating.id}>
+                )}} ?disabled=${deletingId === rating.id}>
                   ${deletingId === rating.id ? 'Removing...' : 'Remove'}
                 </button>
               </td>
@@ -120,7 +120,7 @@ const refetch = async event => {
 };
 
 export const ratingsList = () => html`
-  <button on-click=${toggleVisibility()}>
+  <button @click=${toggleVisibility()}>
     ${visible ? 'Hide' : 'Show'}
   </button>
 
@@ -128,5 +128,5 @@ export const ratingsList = () => html`
 
   <hr>
   
-  <button on-click=${refetch}>Refetch</button>
+  <button @click=${refetch}>Refetch</button>
 `;

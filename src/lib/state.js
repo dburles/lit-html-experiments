@@ -1,4 +1,4 @@
-import { render as _render } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
+import { render as _render } from 'https://unpkg.com/lit-html?module';
 
 let _template;
 let _element;

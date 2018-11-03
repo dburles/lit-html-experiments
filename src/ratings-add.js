@@ -1,4 +1,4 @@
-import { html } from 'https://unpkg.com/lit-html/lib/lit-extended.js?module';
+import { html } from 'https://unpkg.com/lit-html?module';
 import { GraphQLMutation } from './lib/graphql.js';
 import { ratingsQuery, ratingsFragment } from './ratings-list.js';
 import { render } from './lib/state.js';
@@ -18,7 +18,7 @@ let submitting = false;
 
 const onSubmit = async event => {
   event.preventDefault();
-  const input = event.target.elements['title'];
+  const input = event.target.elements['title']
   const title = input.value;
 
   submitting = true;
@@ -38,9 +38,9 @@ const onSubmit = async event => {
 };
 
 export const ratingsAdd = () => html`
-<form on-submit=${onSubmit}>
-  <label>Title</label>  
+<form @submit=${onSubmit}>
+  <label>Title</label>
   <input type="text" name="title" autocomplete="off" />
-  <button disabled=${submitting}>${submitting ? 'Saving...' : 'Add'}</button>
+  <button ?disabled=${submitting}>${submitting ? 'Saving...' : 'Add'}</button>
 </form>
 `;
