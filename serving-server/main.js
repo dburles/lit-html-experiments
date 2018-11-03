@@ -16,20 +16,22 @@ const srcDir = (() => {
   throw new Error('Please specify watch directory!');
 })();
 
-sock.ws.use(function (ctx, next) {
+sock.ws.use(function(ctx, next) {
   connections.push(ctx.websocket);
   // ctx.websocket.on('message', function(message) {});
-  ctx.websocket.on('close', function () {
+  ctx.websocket.on('close', function() {
     connections.splice(connections.indexOf(ctx.websocket), 1);
   });
   // return `next` to pass the context (ctx) on to the next ws middleware
   return next(ctx);
 });
 
-chokidar.watch(srcDir, { ignored: '**/node_modules' }).on('all', (event, path) => {
-  console.log(event, path);
-  connections.forEach(connection => connection.send('reload'));
-});
+chokidar
+  .watch(srcDir, { ignored: '**/node_modules' })
+  .on('all', (event, path) => {
+    console.log(event, path);
+    connections.forEach(connection => connection.send('reload'));
+  });
 
 app.use(
   require('koa-static')(srcDir, {
